@@ -1,7 +1,6 @@
 import { type RequestHandler } from "@builder.io/qwik-city";
 import { validateSession } from "~/lib/auth";
-import fs from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 
 export const onPost: RequestHandler = async (event) => {
   // 1. Check authentication
@@ -29,22 +28,19 @@ export const onPost: RequestHandler = async (event) => {
       return;
     }
 
-    // 3. Prepare upload directory
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    // 4. Generate unique filename (keep original extension)
+    // 3. Generate unique filename (keep original extension)
     const ext = file.name.split(".").pop() || "jpg";
     const uniqueFilename = `hero-${Date.now()}.${ext}`;
-    const filePath = path.join(uploadDir, uniqueFilename);
 
-    // 5. Save file
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    await fs.writeFile(filePath, buffer);
+    // 4. Save file using Vercel Blob
+    const token = event.env.get("BLOB_READ_WRITE_TOKEN") || process.env.BLOB_READ_WRITE_TOKEN;
+    const blob = await put(`uploads/${uniqueFilename}`, file, {
+      access: "public",
+      ...(token ? { token } : {}),
+    });
 
-    // 6. Return public URL
-    const publicUrl = `/uploads/${uniqueFilename}`;
+    // 5. Return public URL
+    const publicUrl = blob.url;
     event.json(200, { url: publicUrl });
   } catch (err) {
     console.error("Upload error:", err);
