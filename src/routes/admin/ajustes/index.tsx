@@ -45,8 +45,8 @@ export const useUpdateSettings = routeAction$(async (data, requestEvent) => {
 export const useUpdateHeroImage = routeAction$(async (data, requestEvent) => {
   const db = getDb(requestEvent.env);
   
-  if (data.image && typeof data.image === 'object' && (data.image as Blob).size > 0) {
-    const file = data.image as File;
+  if (data.image && typeof data.image === 'object' && (data.image as unknown as Blob).size > 0) {
+    const file = data.image as unknown as File;
     const fileName = file.name || `hero-${Date.now()}.webp`;
     const { url } = await put(fileName, file, {
       access: 'public',

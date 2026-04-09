@@ -14,15 +14,30 @@ async function seed() {
 
   const db = getDb({ get: (key: string) => process.env[key] });
 
-  // ─── Admin user ────────────────────────────────────────────────
-  await db
-    .insert(users)
-    .values({
-      email: "admin@redimed.com.ar",
-      passwordHash: hashSync("admin123", 10),
-      name: "Administrador",
-    })
-    .onConflictDoNothing();
+  // ─── Users ────────────────────────────────────────────────
+  const usersToSeed = [
+    { username: "seba", name: "Seba", rawPassword: "R3d1m3d_s3ba!" },
+    { username: "diego", name: "Diego", rawPassword: "R3d1m3d_d13g0!" },
+    { username: "admin", name: "Administrador", rawPassword: "Admin_s3cur3!" },
+  ];
+
+  console.log("-----------------------------------------");
+  console.log("🔑 INSERTING USERS & PASSWORDS");
+  console.log("-----------------------------------------");
+
+  for (const u of usersToSeed) {
+    await db
+      .insert(users)
+      .values({
+        username: u.username,
+        passwordHash: hashSync(u.rawPassword, 10),
+        name: u.name,
+      })
+      .onConflictDoNothing();
+
+    console.log(`User: ${u.username.padEnd(8)} | Pass: ${u.rawPassword}`);
+  }
+  console.log("-----------------------------------------");
 
   // ─── Site settings ─────────────────────────────────────────────
   const defaultSettings = [

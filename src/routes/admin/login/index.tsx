@@ -4,14 +4,14 @@ import { authenticateUser, createSession } from "~/lib/auth";
 import { Button } from "~/components/ui";
 
 export const useLoginAction = routeAction$(async (data, event) => {
-  const email = String(data.email ?? "").trim();
+  const username = String(data.username ?? "").trim();
   const password = String(data.password ?? "");
 
-  if (!email || !password) {
-    return { success: false, error: "Email y contraseña son obligatorios." };
+  if (!username || !password) {
+    return { success: false, error: "Usuario y contraseña son obligatorios." };
   }
 
-  const user = await authenticateUser(email, password, event.env);
+  const user = await authenticateUser(username, password, event.env);
   if (!user) {
     return { success: false, error: "Credenciales inválidas." };
   }
@@ -49,16 +49,16 @@ export default component$(() => {
 
           <Form action={loginAction} class="flex flex-col gap-5">
             <div>
-              <label for="login-email" class="mb-1.5 block text-sm font-medium text-foreground">
-                Email
+              <label for="login-username" class="mb-1.5 block text-sm font-medium text-foreground">
+                Nombre de Usuario
               </label>
               <input
-                id="login-email"
-                name="email"
-                type="email"
+                id="login-username"
+                name="username"
+                type="text"
                 required
                 class="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
-                placeholder="admin@redimed.com.ar"
+                placeholder="admin"
               />
             </div>
             <div>

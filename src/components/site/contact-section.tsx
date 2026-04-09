@@ -197,16 +197,33 @@ export const ContactSection = component$<ContactSectionProps>(
 
               {/* Google Maps */}
               <div class="flex-1 overflow-hidden rounded-2xl border border-border/50 shadow-sm">
-                <iframe
-                  src={mapsUrl}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, minHeight: "260px" }}
-                  allowFullscreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Ubicación de Redimed"
-                />
+                {mapsUrl.includes('embed') ? (
+                  <iframe
+                    src={mapsUrl}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, minHeight: "260px" }}
+                    allowFullscreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Ubicación de Redimed"
+                  />
+                ) : (
+                  <div class="flex h-full min-h-[260px] flex-col items-center justify-center gap-4 bg-muted/10 p-6 text-center">
+                    <LuMapPin class="h-10 w-10 text-muted-foreground" />
+                    <p class="text-sm font-medium text-foreground">
+                      Encontrá nuestra ubicación en el mapa
+                    </p>
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary/90"
+                    >
+                      Abrir en Google Maps
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>

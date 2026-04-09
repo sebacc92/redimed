@@ -12,30 +12,30 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
  * In production, replace with a proper JWT or Auth.js setup.
  */
 
-export async function authenticateUser(email: string, password: string, env: any) {
-  if (typeof email !== "string" || typeof password !== "string") return null;
+export async function authenticateUser(username: string, password: string, env: any) {
+  if (typeof username !== "string" || typeof password !== "string") return null;
 
   const db = getDb(env);
   const [user] = await db
     .select()
     .from(users)
-    .where(eq(users.email, email.toLowerCase().trim()))
+    .where(eq(users.username, username.toLowerCase().trim()))
     .limit(1);
 
   if (!user) return null;
   if (!compareSync(password, user.passwordHash)) return null;
 
-  return { id: user.id, email: user.email, name: user.name };
+  return { id: user.id, username: user.username, name: user.name };
 }
 
 export function createSession(
   event: RequestEventBase,
-  user: { id: number; email: string; name: string },
+  user: { id: number; username: string; name: string },
 ) {
   // Store a simple JSON payload in a signed, httpOnly cookie
   const payload = JSON.stringify({
     id: user.id,
-    email: user.email,
+    username: user.username,
     name: user.name,
   });
 
@@ -65,7 +65,7 @@ export function validateSession(event: RequestEventBase) {
 
   try {
     const payload = JSON.parse(Buffer.from(encoded, "base64url").toString());
-    return payload as { id: number; email: string; name: string };
+    return payload as { id: number; username: string; name: string };
   } catch {
     return null;
   }
