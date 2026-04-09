@@ -7,6 +7,10 @@ import { qwikVite } from "@builder.io/qwik/optimizer";
 import { qwikCity } from "@builder.io/qwik-city/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
+import { config } from "dotenv";
+
+config({ path: ".env.local" });
+config({ path: ".env" });
 import tailwindcss from "@tailwindcss/vite";
 type PkgDep = Record<string, string>;
 const { dependencies = {}, devDependencies = {} } = pkg as any as {
