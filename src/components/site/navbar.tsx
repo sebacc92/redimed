@@ -62,10 +62,7 @@ export const Navbar = component$<NavbarProps>(({ phone, whatsapp, facebook, inst
       <div class="mx-auto flex h-24 w-full max-w-7xl items-center justify-between px-4 lg:px-8">
         {/* Logo */}
         <Link href="/" class="flex items-center gap-2">
-          <img src="/logo.webp" alt="Redimed" class="h-10 w-auto" />
-          <span class="text-2xl font-bold tracking-tight text-primary">
-            Redimed
-          </span>
+          <img src="/logo.webp" alt="Redimed" class="h-14 w-auto" />
         </Link>
 
         {/* Desktop Nav */}

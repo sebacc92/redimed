@@ -7,18 +7,18 @@
 @layer base {
   :root {
     --background: #F8FAFC;
-    --foreground: #0F172A;
+    --foreground: #1A1A1A;
     --muted: #F1F5F9;
     --muted-foreground: #64748B;
     --popover: white;
-    --popover-foreground: #0F172A;
+    --popover-foreground: #1A1A1A;
     --card: white;
-    --card-foreground: #0F172A;
+    --card-foreground: #1A1A1A;
     --border: #E2E8F0;
     --input: #E2E8F0;
-    --primary: #0F2046;
+    --primary: #36A015;
     --primary-foreground: white;
-    --secondary: #00A896;
+    --secondary: #F06B00;
     --secondary-foreground: white;
     --accent: #F0F9FF;
     --accent-foreground: #0C4A6E;
@@ -166,6 +166,9 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
   }
   body {
     @apply bg-background text-foreground;
