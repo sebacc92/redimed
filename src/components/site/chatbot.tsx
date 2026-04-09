@@ -159,7 +159,7 @@ export const Chatbot = component$(() => {
       {/* Toggle Button */}
       <button
         onClick$={() => (isOpen.value = !isOpen.value)}
-        class="fixed right-5 bottom-24 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
+        class="fixed right-5 bottom-24 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
         aria-label="Asistente virtual"
       >
         {isOpen.value ? (

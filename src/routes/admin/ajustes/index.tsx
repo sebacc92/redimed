@@ -27,8 +27,17 @@ export const useUpdateSettings = routeAction$(async (data, requestEvent) => {
     ([key]) => key.startsWith("setting_"),
   );
 
-  for (const [formKey, value] of entries) {
+  for (let [formKey, value] of entries) {
     const settingKey = formKey.replace("setting_", "");
+    
+    // Extract src from iframe if user pastes full HTML
+    if (settingKey === "site_maps_url" && typeof value === "string") {
+      const match = value.match(/src="([^"]+)"/);
+      if (match) {
+        value = match[1];
+      }
+    }
+
     await db
       .update(siteSettings)
       .set({
@@ -119,8 +128,8 @@ const settingLabels: Record<string, { label: string; description: string; type: 
   },
   site_maps_url: {
     label: "URL de Google Maps",
-    description: "URL de embed del iframe de Google Maps",
-    type: "url",
+    description: "Enlace o iframe de inserción de Google Maps",
+    type: "text",
   },
   hero_title: {
     label: "Título del Hero",

@@ -4,7 +4,6 @@ import { getDb } from "~/db/client";
 import { siteSettings } from "~/db/schema";
 import { Navbar } from "~/components/site/navbar";
 import { Footer } from "~/components/site/footer";
-import { WhatsappFab } from "~/components/site/whatsapp-fab";
 import { Chatbot } from "~/components/site/chatbot";
 
 // ─── Load site settings for the entire public layout ────────────
@@ -43,7 +42,6 @@ export default component$(() => {
       />
 
       {/* Floating widgets */}
-      <WhatsappFab whatsapp={s.site_whatsapp ?? "5491112345678"} />
       <Chatbot />
     </div>
   );

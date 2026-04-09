@@ -12,8 +12,8 @@ export const Hero = component$<HeroProps>(({ title, subtitle, bgImage }) => {
   return (
     <section
       id="inicio"
-      class="relative overflow-hidden bg-gradient-to-br from-primary via-sky-800 to-primary pt-16"
-      style={bgImage ? { backgroundImage: `linear-gradient(to right, rgba(12, 74, 110, 0.9), rgba(5, 150, 105, 0.7)), url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+      class="relative overflow-hidden bg-gradient-to-br from-secondary to-primary pt-16"
+      style={bgImage ? { backgroundImage: `linear-gradient(to right, rgba(240, 107, 0, 0.9), rgba(54, 160, 21, 0.7)), url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
     >
       {/* Background pattern */}
       <div class="absolute inset-0 opacity-10">
@@ -29,7 +29,7 @@ export const Hero = component$<HeroProps>(({ title, subtitle, bgImage }) => {
 
       {/* Gradient overlay orbs */}
       <div class="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-secondary/20 blur-3xl" />
-      <div class="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-sky-400/20 blur-3xl" />
+      <div class="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-primary/20 blur-3xl" />
 
       <div class="relative mx-auto flex max-w-7xl flex-col items-center px-4 py-20 text-center lg:px-8 lg:py-32">
         {/* Trust badge */}
