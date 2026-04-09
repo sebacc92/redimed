@@ -1,4 +1,4 @@
-import { component$, useSignal } from "@builder.io/qwik";
+import { $, component$, useSignal } from "@builder.io/qwik";
 import {
   routeLoader$,
   routeAction$,
@@ -10,6 +10,8 @@ import { siteSettings } from "~/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { Button } from "~/components/ui";
 import { LuSave, LuInfo, LuImage } from "@qwikest/icons/lucide";
+import { put } from '@vercel/blob';
+import imageCompression from 'browser-image-compression';
 
 // ─── Load all settings ──────────────────────────────────────────
 export const useAllSettings = routeLoader$(async (requestEvent) => {
@@ -37,6 +39,45 @@ export const useUpdateSettings = routeAction$(async (data, requestEvent) => {
   }
 
   return { success: true };
+});
+
+// ─── Update hero image ──────────────────────────────────────────
+export const useUpdateHeroImage = routeAction$(async (data, requestEvent) => {
+  const db = getDb(requestEvent.env);
+  
+  if (data.image && typeof data.image === 'object' && (data.image as Blob).size > 0) {
+    const file = data.image as File;
+    const fileName = file.name || `hero-${Date.now()}.webp`;
+    const { url } = await put(fileName, file, {
+      access: 'public',
+      addRandomSuffix: true,
+      token: requestEvent.env.get('BLOB_READ_WRITE_TOKEN'),
+    });
+    
+    // Validate if setting exists
+    const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, 'hero_bg_image'));
+    
+    if (existing && existing.length > 0) {
+      await db
+        .update(siteSettings)
+        .set({
+          value: url,
+          updatedAt: sql`(datetime('now'))`,
+        })
+        .where(eq(siteSettings.key, 'hero_bg_image'));
+    } else {
+      await db
+        .insert(siteSettings)
+        .values({
+          key: 'hero_bg_image',
+          value: url,
+          updatedAt: sql`(datetime('now'))`,
+        });
+    }
+
+    return { success: true, url };
+  }
+  return { success: false, error: 'No se recibió ninguna imagen.' };
 });
 
 // ─── Add new setting ────────────────────────────────────────────
@@ -130,8 +171,39 @@ export default component$(() => {
   const allSettings = useAllSettings();
   const updateAction = useUpdateSettings();
   const addAction = useAddSetting();
-  const isUploading = useSignal(false);
+  const updateHeroAction = useUpdateHeroImage();
+  const isCompressing = useSignal(false);
   const heroImage = allSettings.value.find((s) => s.key === "hero_bg_image")?.value;
+
+  const handleImageSubmit = $(async (e: Event, currentTarget: HTMLFormElement) => {
+    if (isCompressing.value || updateHeroAction.isRunning) return;
+
+    isCompressing.value = true;
+    try {
+      const formData = new FormData(currentTarget);
+      const imageFile = formData.get('image') as File | null;
+
+      if (imageFile && imageFile.size > 0 && imageFile.name) {
+        const options = {
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+          fileType: 'image/webp',
+          initialQuality: 0.8,
+        };
+        const compressedBlob = await imageCompression(imageFile, options);
+        const newFileName = imageFile.name.replace(/\.[^/.]+$/, "") + ".webp";
+        const compressedFile = new File([compressedBlob], newFileName, { type: 'image/webp' });
+        
+        formData.set('image', compressedFile);
+      }
+
+      await updateHeroAction.submit(formData);
+    } catch (error) {
+      console.error('Error al comprimir/subir imagen:', error);
+    } finally {
+      isCompressing.value = false;
+    }
+  });
 
   return (
     <div>
@@ -156,59 +228,48 @@ export default component$(() => {
         <h2 class="text-lg font-semibold text-foreground">Imagen del Hero</h2>
         <p class="mb-4 text-sm text-muted-foreground">Sube una imagen de fondo para la sección principal (recomendado: formato horizontal, ancho mayor a 1920px).</p>
         
-        <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+        {updateHeroAction.value?.success && (
+          <div class="mb-4 rounded-lg border border-secondary/30 bg-secondary/5 px-4 py-3 text-sm text-secondary">
+            ✅ Imagen del hero actualizada correctamente
+          </div>
+        )}
+        {updateHeroAction.value?.error && (
+          <div class="mb-4 rounded-lg bg-alert/5 px-4 py-3 text-sm text-alert border border-alert/20">
+            {updateHeroAction.value.error}
+          </div>
+        )}
+
+        <Form 
+          action={updateHeroAction}
+          preventdefault:submit
+          onSubmit$={handleImageSubmit}
+          class="flex flex-col gap-4 sm:flex-row sm:items-end"
+        >
           {heroImage && (
-            <div class="relative h-24 w-40 overflow-hidden rounded-lg border border-border">
-              <img src={heroImage} alt="Hero bg" width={400} height={200} class="h-full w-full object-cover" />
+            <div class="relative h-24 w-40 overflow-hidden rounded-lg border border-border shrink-0 bg-muted">
+              <img src={heroImage} alt="Hero bg" class="h-full w-full object-cover" />
             </div>
           )}
           
-          <div class="flex-1">
+          <div class="flex-1 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <input
               type="file"
-              accept="image/*"
+              name="image"
               id="hero-file"
-              class="hidden"
-              onChange$={async (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
-                if (!file) return;
-
-                isUploading.value = true;
-                const formData = new FormData();
-                formData.append("file", file);
-
-                try {
-                  const res = await fetch("/api/upload/", {
-                    method: "POST",
-                    body: formData,
-                  });
-                  if (!res.ok) throw new Error("Upload failed");
-                  
-                  const data = await res.json();
-                  
-                  // Now save this URL to site settings
-                  const saveFormData = new FormData();
-                  saveFormData.append("setting_hero_bg_image", data.url);
-                  await updateAction.submit(saveFormData);
-                  
-                  window.location.reload();
-                } catch (err) {
-                  console.error(err);
-                  alert("Error al subir la imagen");
-                } finally {
-                  isUploading.value = false;
-                }
-              }}
+              accept="image/*"
+              required
+              class="w-full sm:flex-1 border border-border bg-background rounded-lg text-sm focus:ring-2 focus:ring-primary/20 outline-none file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-medium file:bg-muted file:text-foreground file:cursor-pointer hover:file:bg-accent transition-colors"
             />
-            <label
-              for="hero-file"
-              class={`flex w-max cursor-pointer items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-foreground ${isUploading.value ? 'opacity-50 pointer-events-none' : ''}`}
+            <Button
+              type="submit"
+              disabled={isCompressing.value || updateHeroAction.isRunning}
+              class="gap-2 shrink-0 w-full sm:w-auto rounded-lg"
             >
               <LuImage class="h-4 w-4" />
-              {isUploading.value ? "Subiendo..." : "Seleccionar/Cambiar Imagen"}
-            </label>
+              {isCompressing.value ? "Optimizando..." : updateHeroAction.isRunning ? "Subiendo..." : "Subir Imagen"}
+            </Button>
           </div>
-        </div>
+        </Form>
       </div>
 
       {/* Settings Form */}

@@ -47,7 +47,7 @@ export function createSession(
   event.cookie.set(SESSION_COOKIE, `${encoded}.${signature}`, {
     path: "/",
     httpOnly: true,
-    secure: true,
+    secure: import.meta.env.PROD,
     sameSite: "lax",
     maxAge: SESSION_MAX_AGE,
   });
