@@ -116,7 +116,7 @@ export default component$(() => {
                 name="newPassword"
                 type="password"
                 required
-                minlength={6}
+                minLength={6}
                 class="w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
               />
             </div>
@@ -133,7 +133,7 @@ export default component$(() => {
                 name="confirmPassword"
                 type="password"
                 required
-                minlength={6}
+                minLength={6}
                 class="w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none"
               />
             </div>
