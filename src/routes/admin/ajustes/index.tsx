@@ -27,9 +27,10 @@ export const useUpdateSettings = routeAction$(async (data, requestEvent) => {
     ([key]) => key.startsWith("setting_"),
   );
 
+  // eslint-disable-next-line prefer-const
   for (let [formKey, value] of entries) {
     const settingKey = formKey.replace("setting_", "");
-    
+
     // Extract src from iframe if user pastes full HTML
     if (settingKey === "site_maps_url" && typeof value === "string") {
       const match = value.match(/src="([^"]+)"/);
@@ -53,7 +54,7 @@ export const useUpdateSettings = routeAction$(async (data, requestEvent) => {
 // ─── Update hero image ──────────────────────────────────────────
 export const useUpdateHeroImage = routeAction$(async (data, requestEvent) => {
   const db = getDb(requestEvent.env);
-  
+
   if (data.image && typeof data.image === 'object' && (data.image as unknown as Blob).size > 0) {
     const file = data.image as unknown as File;
     const fileName = file.name || `hero-${Date.now()}.webp`;
@@ -62,10 +63,10 @@ export const useUpdateHeroImage = routeAction$(async (data, requestEvent) => {
       addRandomSuffix: true,
       token: requestEvent.env.get('BLOB_READ_WRITE_TOKEN'),
     });
-    
+
     // Validate if setting exists
     const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, 'hero_bg_image'));
-    
+
     if (existing && existing.length > 0) {
       await db
         .update(siteSettings)
@@ -202,7 +203,7 @@ export default component$(() => {
         const compressedBlob = await imageCompression(imageFile, options);
         const newFileName = imageFile.name.replace(/\.[^/.]+$/, "") + ".webp";
         const compressedFile = new File([compressedBlob], newFileName, { type: 'image/webp' });
-        
+
         formData.set('image', compressedFile);
       }
 
@@ -236,7 +237,7 @@ export default component$(() => {
       <div class="mb-6 rounded-xl border border-border/50 bg-white p-6 shadow-sm">
         <h2 class="text-lg font-semibold text-foreground">Imagen del Hero</h2>
         <p class="mb-4 text-sm text-muted-foreground">Sube una imagen de fondo para la sección principal (recomendado: formato horizontal, ancho mayor a 1920px).</p>
-        
+
         {updateHeroAction.value?.success && (
           <div class="mb-4 rounded-lg border border-secondary/30 bg-secondary/5 px-4 py-3 text-sm text-secondary">
             ✅ Imagen del hero actualizada correctamente
@@ -248,7 +249,7 @@ export default component$(() => {
           </div>
         )}
 
-        <Form 
+        <Form
           action={updateHeroAction}
           preventdefault:submit
           onSubmit$={handleImageSubmit}
@@ -259,7 +260,7 @@ export default component$(() => {
               <img src={heroImage} alt="Hero bg" class="h-full w-full object-cover" />
             </div>
           )}
-          
+
           <div class="flex-1 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <input
               type="file"
@@ -396,9 +397,9 @@ export default component$(() => {
             "contact_title", "contact_subtitle"
           ];
           const otherSettings = allSettings.value.filter(s => !knownKeys.includes(s.key));
-          
+
           if (otherSettings.length === 0) return null;
-          
+
           return (
             <div class="rounded-xl border border-border/50 bg-white shadow-sm overflow-hidden">
               <div class="border-b border-border/30 bg-muted/20 px-5 py-3">
