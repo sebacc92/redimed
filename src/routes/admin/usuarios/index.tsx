@@ -4,7 +4,7 @@ import {
   Form,
   type DocumentHead,
 } from "@builder.io/qwik-city";
-import { db } from "~/db/client";
+import { getDb } from "~/db/client";
 import { users } from "~/db/schema";
 import { eq } from "drizzle-orm";
 import { validateSession } from "~/lib/auth";
@@ -35,6 +35,7 @@ export const useUpdatePassword = routeAction$(async (data, event) => {
   }
 
   // Fetch user
+  const db = getDb(event.env);
   const [user] = await db
     .select()
     .from(users)

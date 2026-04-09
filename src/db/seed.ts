@@ -5,12 +5,14 @@ import { config } from "dotenv";
 config({ path: ".env.local" });
 config({ path: ".env" });
 
-import { db } from "./client";
+import { getDb } from "./client";
 import { users, siteSettings, services } from "./schema";
 import { hashSync } from "bcryptjs";
 
 async function seed() {
   console.log("🌱 Seeding database...");
+
+  const db = getDb({ get: (key: string) => process.env[key] });
 
   // ─── Admin user ────────────────────────────────────────────────
   await db

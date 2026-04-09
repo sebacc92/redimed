@@ -1,6 +1,6 @@
 import { type RequestEventBase } from "@builder.io/qwik-city";
 import { compareSync } from "bcryptjs";
-import { db } from "~/db/client";
+import { getDb } from "~/db/client";
 import { users } from "~/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -12,9 +12,10 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
  * In production, replace with a proper JWT or Auth.js setup.
  */
 
-export async function authenticateUser(email: string, password: string) {
+export async function authenticateUser(email: string, password: string, env: any) {
   if (typeof email !== "string" || typeof password !== "string") return null;
 
+  const db = getDb(env);
   const [user] = await db
     .select()
     .from(users)

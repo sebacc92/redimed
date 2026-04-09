@@ -1,6 +1,6 @@
 import { component$, Slot } from "@builder.io/qwik";
 import { routeLoader$ } from "@builder.io/qwik-city";
-import { db } from "~/db/client";
+import { getDb } from "~/db/client";
 import { siteSettings } from "~/db/schema";
 import { Navbar } from "~/components/site/navbar";
 import { Footer } from "~/components/site/footer";
@@ -8,7 +8,8 @@ import { WhatsappFab } from "~/components/site/whatsapp-fab";
 import { Chatbot } from "~/components/site/chatbot";
 
 // ─── Load site settings for the entire public layout ────────────
-export const useSettings = routeLoader$(async () => {
+export const useSettings = routeLoader$(async (requestEvent) => {
+  const db = getDb(requestEvent.env);
   const rows = await db.select().from(siteSettings);
   const map: Record<string, string> = {};
   for (const row of rows) {

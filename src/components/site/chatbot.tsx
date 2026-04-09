@@ -1,7 +1,7 @@
 import { component$, useSignal, useStore, $ } from "@builder.io/qwik";
 import { server$ } from "@builder.io/qwik-city";
 import { LuMessageCircle, LuX, LuBot, LuSend, LuAlertTriangle, LuPhone } from "@qwikest/icons/lucide";
-import { db } from "~/db/client";
+import { getDb } from "~/db/client";
 import { messages } from "~/db/schema";
 
 // ─── Server function to save chatbot leads ──────────────────────
@@ -18,6 +18,7 @@ const saveChatbotLead = server$(async function (data: {
     throw new Error("Datos inválidos");
   }
 
+  const db = getDb(this.env);
   await db.insert(messages).values({
     name: data.name.trim(),
     phone: data.phone.trim(),

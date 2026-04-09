@@ -11,7 +11,7 @@ export const useLoginAction = routeAction$(async (data, event) => {
     return { success: false, error: "Email y contraseña son obligatorios." };
   }
 
-  const user = await authenticateUser(email, password);
+  const user = await authenticateUser(email, password, event.env);
   if (!user) {
     return { success: false, error: "Credenciales inválidas." };
   }

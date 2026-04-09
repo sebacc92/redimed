@@ -1,10 +1,11 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, routeAction$, type DocumentHead } from "@builder.io/qwik-city";
-import { db } from "~/db/client";
+import { getDb } from "~/db/client";
 import { messages, siteSettings } from "~/db/schema";
 import { ContactSection } from "~/components/site/contact-section";
 
-export const useContactSettings = routeLoader$(async () => {
+export const useContactSettings = routeLoader$(async (requestEvent) => {
+  const db = getDb(requestEvent.env);
   const rows = await db.select().from(siteSettings);
   const map: Record<string, string> = {};
   for (const row of rows) {
@@ -13,7 +14,8 @@ export const useContactSettings = routeLoader$(async () => {
   return map;
 });
 
-export const useContactAction = routeAction$(async (data) => {
+export const useContactAction = routeAction$(async (data, requestEvent) => {
+  const db = getDb(requestEvent.env);
   const name = String(data.name ?? "").trim();
   const email = String(data.email ?? "").trim();
   const phone = String(data.phone ?? "").trim();

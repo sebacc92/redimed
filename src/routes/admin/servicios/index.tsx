@@ -5,7 +5,7 @@ import {
   Form,
   type DocumentHead,
 } from "@builder.io/qwik-city";
-import { db } from "~/db/client";
+import { getDb } from "~/db/client";
 import { services } from "~/db/schema";
 import { eq } from "drizzle-orm";
 import { Button } from "~/components/ui";
@@ -19,12 +19,14 @@ import {
 } from "@qwikest/icons/lucide";
 
 // ─── Load all services ──────────────────────────────────────────
-export const useAllServices = routeLoader$(async () => {
+export const useAllServices = routeLoader$(async (requestEvent) => {
+  const db = getDb(requestEvent.env);
   return await db.select().from(services).orderBy(services.order);
 });
 
 // ─── Create service ─────────────────────────────────────────────
-export const useCreateService = routeAction$(async (data) => {
+export const useCreateService = routeAction$(async (data, requestEvent) => {
+  const db = getDb(requestEvent.env);
   const title = String(data.title ?? "").trim();
   const description = String(data.description ?? "").trim();
   const iconName = String(data.icon_name ?? "heart-pulse").trim();
@@ -44,7 +46,8 @@ export const useCreateService = routeAction$(async (data) => {
 });
 
 // ─── Update service ─────────────────────────────────────────────
-export const useUpdateService = routeAction$(async (data) => {
+export const useUpdateService = routeAction$(async (data, requestEvent) => {
+  const db = getDb(requestEvent.env);
   const id = parseInt(String(data.id), 10);
   const title = String(data.title ?? "").trim();
   const description = String(data.description ?? "").trim();
@@ -70,7 +73,8 @@ export const useUpdateService = routeAction$(async (data) => {
 });
 
 // ─── Delete service ─────────────────────────────────────────────
-export const useDeleteService = routeAction$(async (data) => {
+export const useDeleteService = routeAction$(async (data, requestEvent) => {
+  const db = getDb(requestEvent.env);
   const id = parseInt(String(data.id), 10);
   if (!id) return { success: false, error: "ID inválido." };
 

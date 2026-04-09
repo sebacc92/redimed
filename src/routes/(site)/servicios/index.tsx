@@ -1,11 +1,12 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-import { db } from "~/db/client";
+import { getDb } from "~/db/client";
 import { services, siteSettings } from "~/db/schema";
 import { eq } from "drizzle-orm";
 import { ServicesSection } from "~/components/site/services-section";
 
-export const useServices = routeLoader$(async () => {
+export const useServices = routeLoader$(async (requestEvent) => {
+  const db = getDb(requestEvent.env);
   return await db
     .select({
       id: services.id,
@@ -18,7 +19,8 @@ export const useServices = routeLoader$(async () => {
     .orderBy(services.order);
 });
 
-export const useServicesSettings = routeLoader$(async () => {
+export const useServicesSettings = routeLoader$(async (requestEvent) => {
+  const db = getDb(requestEvent.env);
   const rows = await db.select().from(siteSettings);
   const map: Record<string, string> = {};
   for (const row of rows) {

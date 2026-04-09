@@ -4,14 +4,15 @@ import {
   routeAction$,
   type DocumentHead,
 } from "@builder.io/qwik-city";
-import { db } from "~/db/client";
+import { getDb } from "~/db/client";
 import { messages } from "~/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { Button } from "~/components/ui";
 import { LuMail, LuMailOpen, LuTrash2, LuPhone, LuUser } from "@qwikest/icons/lucide";
 
 // ─── Load all messages ──────────────────────────────────────────
-export const useAllMessages = routeLoader$(async () => {
+export const useAllMessages = routeLoader$(async (requestEvent) => {
+  const db = getDb(requestEvent.env);
   return await db
     .select()
     .from(messages)
@@ -19,7 +20,8 @@ export const useAllMessages = routeLoader$(async () => {
 });
 
 // ─── Mark as read ───────────────────────────────────────────────
-export const useMarkRead = routeAction$(async (data) => {
+export const useMarkRead = routeAction$(async (data, requestEvent) => {
+  const db = getDb(requestEvent.env);
   const id = parseInt(String(data.id), 10);
   if (!id) return { success: false };
 
@@ -32,7 +34,8 @@ export const useMarkRead = routeAction$(async (data) => {
 });
 
 // ─── Delete message ─────────────────────────────────────────────
-export const useDeleteMessage = routeAction$(async (data) => {
+export const useDeleteMessage = routeAction$(async (data, requestEvent) => {
+  const db = getDb(requestEvent.env);
   const id = parseInt(String(data.id), 10);
   if (!id) return { success: false };
 

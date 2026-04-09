@@ -5,19 +5,21 @@ import {
   Form,
   type DocumentHead,
 } from "@builder.io/qwik-city";
-import { db } from "~/db/client";
+import { getDb } from "~/db/client";
 import { siteSettings } from "~/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { Button } from "~/components/ui";
 import { LuSave, LuInfo, LuImage } from "@qwikest/icons/lucide";
 
 // ─── Load all settings ──────────────────────────────────────────
-export const useAllSettings = routeLoader$(async () => {
+export const useAllSettings = routeLoader$(async (requestEvent) => {
+  const db = getDb(requestEvent.env);
   return await db.select().from(siteSettings).orderBy(siteSettings.key);
 });
 
 // ─── Update settings ────────────────────────────────────────────
-export const useUpdateSettings = routeAction$(async (data) => {
+export const useUpdateSettings = routeAction$(async (data, requestEvent) => {
+  const db = getDb(requestEvent.env);
   // data comes as flat key-value pairs from the form
   const entries = Object.entries(data).filter(
     ([key]) => key.startsWith("setting_"),
@@ -38,7 +40,8 @@ export const useUpdateSettings = routeAction$(async (data) => {
 });
 
 // ─── Add new setting ────────────────────────────────────────────
-export const useAddSetting = routeAction$(async (data) => {
+export const useAddSetting = routeAction$(async (data, requestEvent) => {
+  const db = getDb(requestEvent.env);
   const key = String(data.key ?? "").trim().toLowerCase().replace(/\s+/g, "_");
   const value = String(data.value ?? "").trim();
 
