@@ -2,6 +2,7 @@ import { component$, useSignal } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { LuMenu, LuX, LuPhone } from "@qwikest/icons/lucide";
 import { Button } from "~/components/ui";
+import { LogoFull } from "~/components/icons/LogoFull";
 
 interface NavbarProps {
   phone?: string;
@@ -62,7 +63,7 @@ export const Navbar = component$<NavbarProps>(({ phone, whatsapp, facebook, inst
       <div class="mx-auto flex h-24 w-full max-w-7xl items-center justify-between px-4 lg:px-8">
         {/* Logo */}
         <Link href="/" class="flex items-center gap-2">
-          <img src="/logo.webp" alt="Redimed" class="h-14 w-auto" />
+          <LogoFull class="h-16 w-auto" />
         </Link>
 
         {/* Desktop Nav */}

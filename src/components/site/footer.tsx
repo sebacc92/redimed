@@ -1,6 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { LuPhone, LuMail, LuMapPin } from "@qwikest/icons/lucide";
+import { LogoFull } from "~/components/icons/LogoFull";
 
 interface FooterProps {
   phone?: string;
@@ -18,7 +19,7 @@ export const Footer = component$<FooterProps>(({ phone, email, address }) => {
           {/* Brand */}
           <div class="lg:col-span-1">
             <Link href="/" class="flex items-center gap-2">
-              <img src="/logo.webp" alt="Redimed" class="h-12 w-auto grayscale contrast-125 brightness-0 invert" />
+               <LogoFull class="h-20 w-auto grayscale contrast-125 brightness-0 invert" />
             </Link>
             <p class="mt-4 text-sm leading-relaxed text-white/60">
               Internación Domiciliaria Integral. Más de 15 años brindando

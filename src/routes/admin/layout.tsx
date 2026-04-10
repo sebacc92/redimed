@@ -10,6 +10,7 @@ import {
   LuLogOut,
   LuArrowLeft,
 } from "@qwikest/icons/lucide";
+import { LogoFull } from "~/components/icons/LogoFull";
 
 export const useLogoutAction = routeAction$(async (_, event) => {
   destroySession(event);
@@ -33,8 +34,8 @@ export default component$(() => {
       {/* Sidebar */}
       <aside class="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-border/50 bg-white lg:flex">
         {/* Brand */}
-        <div class="flex h-16 items-center gap-2 border-b border-border/50 px-6">
-          <img src="/logo.webp" alt="Redimed" class="h-10 w-auto" />
+        <div class="flex h-20 items-center justify-center gap-2 border-b border-border/50 px-6 py-4">
+          <LogoFull class="h-12 w-auto" />
           <span class="ml-1 rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
             Admin
           </span>
@@ -88,9 +89,9 @@ export default component$(() => {
       </aside>
 
       {/* Mobile top bar */}
-      <div class="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-border/50 bg-white px-4 lg:hidden">
+      <div class="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b border-border/50 bg-white px-4 lg:hidden">
         <div class="flex items-center gap-2">
-          <img src="/logo.webp" alt="Redimed" class="h-8 w-auto" />
+          <LogoFull class="h-10 w-auto" />
           <span class="ml-1 rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">Admin</span>
         </div>
       </div>

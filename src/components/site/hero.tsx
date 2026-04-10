@@ -1,6 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Button } from "~/components/ui";
 import { LuArrowRight, LuShieldCheck } from "@qwikest/icons/lucide";
+import { SymbolRim } from "~/components/icons/SymbolRim";
 
 interface HeroProps {
   title: string;
@@ -25,6 +26,11 @@ export const Hero = component$<HeroProps>(({ title, subtitle, bgImage }) => {
             backgroundSize: "60px 60px",
           }}
         />
+      </div>
+
+      {/* SymbolRim Watermark */}
+      <div class="pointer-events-none absolute inset-0 overflow-hidden opacity-10">
+        <SymbolRim class="absolute -right-32 top-0 h-[600px] w-auto rotate-12" />
       </div>
 
       {/* Gradient overlay orbs */}
