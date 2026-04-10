@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { Card } from "~/components/ui";
+import g304Img from "~/media/g304.png";
 import {
   LuBed,
   LuMonitorCheck,
@@ -49,11 +50,12 @@ export const ServicesSection = component$<ServicesSectionProps>(
       <section id="servicios" class="py-20 lg:py-28">
         <div class="mx-auto max-w-7xl px-4 lg:px-8">
           {/* Section Header */}
-          <div class="mx-auto max-w-2xl text-center">
+          <div class="mx-auto max-w-2xl text-center flex flex-col items-center">
+            <img src={g304Img} alt="Redimed Icono" class="mt-6 mb-4 h-24 w-auto" />
             <span class="text-sm font-semibold tracking-wider text-secondary uppercase">
               Nuestros Servicios
             </span>
-            <h2 class="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            <h2 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               {title || "Atención integral a domicilio"}
             </h2>
             <p class="mt-4 text-lg text-muted-foreground">
